@@ -1,0 +1,20 @@
+import math
+# User input (space-separated numbers)
+nums = list(map(int, input("Enter numbers separated by spaces: ").split()))
+n = len(nums)
+radius = 10  
+
+# Create a grid for display
+size = radius * 2 + 3
+grid = [[" " for _ in range(size)] for _ in range(size)]
+
+# Place numbers in a circle
+for i in range(n):
+    angle = 2 * math.pi * i / n
+    x = int(radius + radius * math.cos(angle))
+    y = int(radius + radius * math.sin(angle))
+    grid[y][x] = str((i+1) % 10)  # numbers 1-9 repeat
+
+# Print the grid
+for row in grid:
+    print("".join(row))
