@@ -1,0 +1,56 @@
+import nltk
+from nltk.corpus import wordnet
+
+# Run this once (only the first time you play):
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
+def get_related_words(word):
+    """Return a set of related words for the given word using WordNet"""
+    synonyms = set()
+    for syn in wordnet.synsets(word):
+        for lemma in syn.lemmas():
+            synonyms.add(lemma.name().lower())
+    return synonyms
+
+# Game Setup
+num_players = int(input("Enter number of players (2-6): "))
+players = ["Player " + str(i+1) for i in range(num_players)]
+scores = [0] * num_players
+
+# First word
+current_word = input("\nEnter the starting word: ").lower()
+print(f"\n🎮 Game Start! The first word is: {current_word}\n")
+
+turn = 0
+while True:
+    player = players[turn % len(players)]
+    print(f"{player}'s turn. Current word: {current_word}")
+    word = input("Enter your word: ").lower()
+
+    # Rule 1: must start with last letter
+    if word[0] != current_word[-1]:
+        print(f"❌ Wrong! Word must start with '{current_word[-1]}'. {player} is out!")
+        players.pop(turn % len(players))
+        scores.pop(turn % len(scores))
+        if len(players) == 1:
+            print(f"\n🏆 {players[0]} wins with {scores[0]} points!")
+            break
+        continue
+
+    # Rule 2: must be related to the previous word
+    related = get_related_words(current_word)
+    if word not in related:
+        print(f"❌ '{word}' is not related to '{current_word}'. {player} is out!")
+        players.pop(turn % len(players))
+        scores.pop(turn % len(scores))
+        if len(players) == 1:
+            print(f"\n🏆 {players[0]} wins with {scores[0]} points!")
+            break
+        continue
+
+    # Valid move
+    print(f"✅ Nice! {word} accepted.")
+    scores[turn % len(players)] += 1
+    current_word = word  # update word
+    turn += 1
