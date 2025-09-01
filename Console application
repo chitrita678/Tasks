@@ -1,0 +1,67 @@
+# Task Manager - CRUD operations using list
+tasks = []
+def show_menu():
+    print("\n--- Task Manager ---")
+    print("1. Create Task")
+    print("2. Read Tasks")
+    print("3. Update Task")
+    print("4. Delete Task")
+    print("5. Exit")
+
+def create_task():
+    task = input("Enter a new task: ")
+    tasks.append(task)
+    print("✅ Task added successfully!")
+
+def read_tasks():
+    if not tasks:
+        print("⚠ No tasks available.")
+    else:
+        print("\nYour Tasks:")
+        for i, task in enumerate(tasks, 1):
+            print(f"{i}. {task}")
+
+def update_task():
+    read_tasks()
+    if tasks:
+        try:
+            index = int(input("Enter task number to update: ")) - 1
+            if 0 <= index < len(tasks):
+                new_task = input("Enter the updated task: ")
+                tasks[index] = new_task
+                print("✅ Task updated successfully!")
+            else:
+                print("❌ Invalid task number.")
+        except ValueError:
+            print("❌ Please enter a valid number.")
+
+def delete_task():
+    read_tasks()
+    if tasks:
+        try:
+            index = int(input("Enter task number to delete: ")) - 1
+            if 0 <= index < len(tasks):
+                removed = tasks.pop(index)
+                print(f"✅ Task '{removed}' deleted successfully!")
+            else:
+                print("❌ Invalid task number.")
+        except ValueError:
+            print("❌ Please enter a valid number.")
+# Main loop
+while True:
+    show_menu()
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        create_task()
+    elif choice == "2":
+        read_tasks()
+    elif choice == "3":
+        update_task()
+    elif choice == "4":
+        delete_task()
+    elif choice == "5":
+        print("👋 Exiting Task Manager. Goodbye!")
+        break
+    else:
+        print("❌ Invalid choice, please try again.")
