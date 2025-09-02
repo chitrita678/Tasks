@@ -1,0 +1,105 @@
+import os
+
+FILE_NAME = "tasks.txt"
+
+# Load tasks from file
+def load_tasks():
+    tasks = []
+    if os.path.exists(FILE_NAME):
+        try:
+            with open(FILE_NAME, "r") as f:
+                for line in f:
+                    parts = line.strip().split(",")
+                    if len(parts) == 3:
+                        try:
+                            tasks.append({"id": int(parts[0]), "title": parts[1], "status": parts[2]})
+                        except ValueError:
+                            print(f"Skipping invalid task line: {line}")
+        except Exception as e:
+            print(f"Error loading tasks: {e}")
+    return tasks
+
+# Save tasks to file
+def save_tasks(tasks):
+    try:
+        with open(FILE_NAME, "w") as f:
+            for task in tasks:
+                f.write(f"{task['id']},{task['title']},{task['status']}\n")
+    except Exception as e:
+        print(f"Error saving tasks: {e}")
+
+# CRUD operations
+def create_task(tasks, title):
+    task_id = len(tasks) + 1
+    tasks.append({"id": task_id, "title": title, "status": "Pending"})
+    save_tasks(tasks)
+
+def read_tasks(tasks):
+    if not tasks:
+        print("No tasks found!")
+    else:
+        for task in tasks:
+            print(f"ID: {task['id']}, Title: {task['title']}, Status: {task['status']}")
+
+def update_task(tasks, task_id, new_title=None, new_status=None):
+    for task in tasks:
+        if task["id"] == task_id:
+            if new_title:
+                task["title"] = new_title
+            if new_status:
+                task["status"] = new_status
+            save_tasks(tasks)
+            print("Task updated successfully!")
+            return
+    print("Task not found!")
+
+def delete_task(tasks, task_id):
+    for task in tasks:
+        if task["id"] == task_id:
+            tasks.remove(task)
+            save_tasks(tasks)
+            print("Task deleted successfully!")
+            return
+    print("Task not found!")
+
+# Safe input function
+def safe_int_input(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Invalid input! Please enter a number.")
+
+# Main program
+def main():
+    tasks = load_tasks()
+    while True:
+        print("\n1. Create\n2. Read\n3. Update\n4. Delete\n5. Exit")
+        choice = input("Enter choice: ")
+
+        if choice == "1":
+            title = input("Enter task title: ")
+            create_task(tasks, title)
+
+        elif choice == "2":
+            read_tasks(tasks)
+
+        elif choice == "3":
+            task_id = safe_int_input("Enter task ID: ")
+            new_title = input("Enter new title (leave blank to skip): ")
+            new_status = input("Enter new status (Pending/Done, leave blank to skip): ")
+            update_task(tasks, task_id, new_title if new_title else None, new_status if new_status else None)
+
+        elif choice == "4":
+            task_id = safe_int_input("Enter task ID: ")
+            delete_task(tasks, task_id)
+
+        elif choice == "5":
+            print("Exiting... Tasks saved!")
+            break
+
+        else:
+            print("Invalid choice! Please enter 1-5.")
+
+if __name__ == "__main__":
+    main()
